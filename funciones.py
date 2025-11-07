@@ -3,6 +3,49 @@ import csv
 
 NOMBRE_ARCHIVO = "paises.csv"
 
+def buscar_pais():
+    
+    while True:
+        limpiar()
+        print("=== BÚSQUEDA PAÍS ===")
+        nombre_pais = input("Ingrese el país a buscar (* para Cancelar): ")
+
+        while es_nombre_vacio(nombre_pais):
+            print("\nEl nombre no puede ser vacío.")
+            nombre_pais = input("Ingrese el país a buscar (* para Cancelar): ")
+            
+        if nombre_pais == "*":
+            limpiar()
+            break
+
+        paises = obtener_paises()
+        resultados = []
+
+        for p in paises:
+            if nombre_pais.strip().lower() in (p["PAIS"]).strip().lower():
+                resultados.append(p)
+
+        if len(resultados) > 0:
+            print(f"\nSe encontraron {len(resultados)} resultado(s)")
+            print("=========================================")
+
+            for p in resultados:
+                print(f"Nombre: {p["PAIS"]}")
+                print(f"Población: {p["POBLACION"]} habitantes.")
+                print(f"Superficie: {p["SUPERFICIE"]} km²")
+                print(f"Continente: {p["CONTINENTE"]}")
+                print("================================\n")
+
+            print("\nPresione Enter para continuar...")
+            input()
+            limpiar()
+
+        else:
+            print("\nNo se encontró ninguna coincidencia con la búsqueda.")
+            print("Presione Enter para continuar...")
+            input()
+            limpiar()
+
 def escribir_paisDB(pais): #Agregar un titulo al CSV
     with open(NOMBRE_ARCHIVO, "a", newline="", encoding="utf-8") as archivo:
         escritor = csv.DictWriter(archivo, fieldnames=["PAIS", "POBLACION", "SUPERFICIE", "CONTINENTE"])
@@ -37,17 +80,17 @@ def agregar_pais():
         limpiar()
         print("=== AGREGAR NUEVO PAÍS ===")
 
-        nombre = input("Nombre del país: ")
+        nombre_pais = input("Nombre del país: ")
         
         # Validar pais repetido
-        while es_pais_repetido(nombre):
+        while es_pais_repetido(nombre_pais):
             print("\nEl país ingresado ya se encuentra en la base de datos. Vuelva a intentarlo.")
-            nombre = input("Nombre del país: ")
+            nombre_pais = input("Nombre del país: ")
 
         # Validar nombre vacio
-        while es_nombre_vacio(nombre):
+        while es_nombre_vacio(nombre_pais):
             print("\nEl nombre no puede ser vacío.")
-            nombre = input("Nombre del país: ")
+            nombre_pais = input("Nombre del país: ")
 
         poblacion = input("Población del país: ")
 
@@ -72,7 +115,7 @@ def agregar_pais():
 
         # Cargar pais
 
-        escribir_paisDB({"PAIS": nombre, "POBLACION": int(poblacion), "SUPERFICIE": int(superficie), "CONTINENTE": continente})
+        escribir_paisDB({"PAIS": nombre_pais, "POBLACION": int(poblacion), "SUPERFICIE": int(superficie), "CONTINENTE": continente})
         
         limpiar()
         print("País agregado exitosamente.")
@@ -126,15 +169,16 @@ def mostrar_menu():
             case "2": # Actualizar datos
                 pass
             case "3": # Buscar pais
-                pass
+                buscar_pais()
             case "4": # Filtrar paises
                 pass
             case "5": # Ordenar paises
-                pass
+                ordenar_paises()
             case "6": # Mostrar estadisticas 
                 pass
             case "7": # Salir
-                print("\nPrograma terminado. Hasta la próxima!")
+                print("\nPrograma terminado. \nHasta la próxima!")
+                print()
                 break
             case _:
                 print("\nLa opción ingresada no es válida. \nPresione Enter para continuar...")
