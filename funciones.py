@@ -3,6 +3,212 @@ import csv
 
 NOMBRE_ARCHIVO = "paises.csv"
 
+
+def ordenar_por_opcion(opc, orden):
+    
+    paises = obtener_paises()
+    numero_paises = len(paises)
+
+    match opc:
+        case 1: # Ordenar por nombre
+            
+            opcion = "PAIS"
+
+            if orden == True:
+                for i in range(numero_paises - 1):
+                    for j in range(i+1, numero_paises):
+                        if paises[i][opcion].lower() > paises[i+1][opcion].lower():
+                            paises[i], paises[j] = paises[j],paises[i]
+            else:
+                for i in range(numero_paises - 1):
+                    for j in range(i+1, numero_paises):
+                        if paises[i][opcion] < paises[i+1][opcion]:
+                            paises[i], paises[j] = paises[j],paises[i]    
+            
+            return paises
+        
+        case 2: # Ordenar por poblacion
+            opcion = "POBLACION"
+        case 3: # Ordenar por superficie
+            opcion = "SUPERFICIE"
+    
+    if opcion == "POBLACION" or opcion == "SUPERFICIE":
+        if orden == True:
+            for i in range(numero_paises - 1):
+                for j in range(i+1, numero_paises):
+                    if paises[i][opcion] > paises[i+1][opcion]:
+                        paises[i], paises[j] = paises[j],paises[i]
+        else:
+            for i in range(numero_paises - 1):
+                for j in range(i+1, numero_paises):
+                    if paises[i][opcion] < paises[i+1][opcion]:
+                        paises[i], paises[j] = paises[j],paises[i]    
+        
+        return paises
+
+def ordenar_paises():
+    
+    while True:    
+        limpiar()
+        print("=== ORDENAR PAÍSES ===")
+        print("1. Por nombre")
+        print("2. Por población")
+        print("3. Por superficie")
+        print("\n4. Volver al menú anterior")
+
+
+        opcion = input("\nSeleccione una opción: ").strip()
+
+        match opcion:
+            case "1": # Ordenar por nombre
+                
+                orden_ascendente = True
+                opcion = 1
+                
+                while True:
+                    
+                    paises_ordenados = ordenar_por_opcion(opcion, orden_ascendente)
+
+                    if orden_ascendente == True:
+                        orden = "Ascendente"
+                    else:
+                        orden = "Descendente"
+
+                    limpiar()
+                    print("=========================================")
+                    print(f"====== PAÍSES ORDENADOS POR NOMBRE ======")
+                    print("=========================================")
+                    print(f"Orden: {orden}\n")
+
+                    for i, p in enumerate(paises_ordenados):
+                        print(f"{i+1}. {p["PAIS"]}")
+                    
+                    print("\n=== MENÚ ===")
+                    print("1. Invertir orden")
+                    print("2. Volver al menú anterior")
+                    opcion_menu = input("\nOpción: ")
+
+                    while opcion_menu not in ("12"):
+                        print("\nOpción incorrecta. Vuelva a intentarlo.")
+                        print("\n=== MENÚ ===")
+                        print("1. Invertir orden")
+                        print("2. Volver al menú anterior")
+                        opcion_menu = input("\nOpción: ")
+                    
+                    if opcion_menu == "1":
+                        if orden_ascendente == True:
+                            orden_ascendente = False
+                        else:
+                            orden_ascendente = True
+                        continue
+
+                    else:
+                        limpiar()
+                        break
+
+
+            case "2": # Ordenar por poblacion
+                
+                orden_ascendente = True           
+                opcion = 2
+                
+                while True:
+                    
+                    paises_ordenados = ordenar_por_opcion(opcion, orden_ascendente)
+
+                    if orden_ascendente == True:
+                        orden = "Ascendente"
+                    else:
+                        orden = "Descendente"
+
+                    limpiar()
+                    print("========================================")
+                    print(f"==== PAÍSES ORDENADOS POR POBLACIÓN ====")
+                    print("========================================")
+                    print(f"Orden: {orden}\n")
+                    
+                    for i, p in enumerate(paises_ordenados):
+                        print(f"{i+1}. {p["PAIS"].upper()}")
+                        print(f"-- Población: {p["POBLACION"]} habitantes.")
+                    
+                    print("\n=== MENÚ ===")
+                    print("1. Invertir orden")
+                    print("2. Volver al menú anterior")
+                    opcion_menu = input("\nOpción: ")
+
+                    while opcion_menu not in ("12"):
+                        print("\nOpción incorrecta. Vuelva a intentarlo.")
+                        print("\n=== MENÚ ===")
+                        print("1. Invertir orden")
+                        print("2. Volver al menú anterior")
+                        opcion_menu = input("\nOpción: ")
+                    
+                    if opcion_menu == "1":
+                        if orden_ascendente == True:
+                            orden_ascendente = False
+                        else:
+                            orden_ascendente = True
+                        continue
+
+                    else:
+                        limpiar()
+                        break
+
+            case "3": # Ordenar por superficie
+
+                orden_ascendente = True           
+                opcion = 3
+
+                while True:
+                    
+                    paises_ordenados = ordenar_por_opcion(opcion, orden_ascendente)
+
+                    if orden_ascendente == True:
+                        orden = "Ascendente"
+                    else:
+                        orden = "Descendente"
+
+                    limpiar()
+                    print("========================================")
+                    print(f"=== PAÍSES ORDENADOS POR SUPERFICIE ===")
+                    print("========================================")
+                    print(f"Orden: {orden}\n")
+                    
+                    for i, p in enumerate(paises_ordenados):
+                        print(f"{i+1}. {p["PAIS"].upper()}")
+                        print(f"-- Superficie: {p["SUPERFICIE"]} kms²")
+                    
+                    print("\n=== MENÚ ===")
+                    print("1. Invertir orden")
+                    print("2. Volver al menú anterior")
+                    opcion_menu = input("\nOpción: ")
+
+                    while opcion_menu not in ("12"):
+                        print("\nOpción incorrecta. Vuelva a intentarlo.")
+                        print("\n=== MENÚ ===")
+                        print("1. Invertir orden")
+                        print("2. Volver al menú anterior")
+                        opcion_menu = input("\nOpción: ")
+                    
+                    if opcion_menu == "1":
+                        if orden_ascendente == True:
+                            orden_ascendente = False
+                        else:
+                            orden_ascendente = True
+                        continue
+
+                    else:
+                        limpiar()
+                        break
+                    
+            case "4": # Volver al menu
+                limpiar()
+                break
+            case _:
+                print("\nLa opción ingresada no es válida. \nPresione Enter para continuar...")
+                input()
+                limpiar()
+
 def buscar_pais():
     
     while True:
@@ -173,7 +379,9 @@ def mostrar_menu():
             case "4": # Filtrar paises
                 pass
             case "5": # Ordenar paises
+                
                 ordenar_paises()
+
             case "6": # Mostrar estadisticas 
                 pass
             case "7": # Salir
