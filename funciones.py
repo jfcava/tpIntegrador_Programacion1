@@ -347,6 +347,176 @@ def obtener_paises():
     
     return paises
 
+# HELPER DE PERSISTENICIA - (SOBREESCRIBE EL CSV)
+
+def sobrescribir_paises(paises):
+    with open(NOMBRE_ARCHIVO, "w", newline="", encoding="utf-8") as archivo:
+        campos = ["PAIS", "POBLACION", "SUPERFICIE", "CONTINENTE"]
+        escritor = csv.DictWriter(archivo, fieldnames=campos)
+        escritor.writeheader()
+        for p in paises:
+            escritor.writerow({
+                "PAIS": p["PAIS"],
+                "POBLACION": int(p["POBLACION"]),
+                "SUPERFICIE": int(p["SUPERFICIE"]),
+                "CONTINENTE": p["CONTINENTE"]
+            })
+
+# CASE 2: ACTUALIZA DATOS DE POBLACION Y SUPERFICIE
+
+def actualizar_datos():
+    while True:
+        limpiar()
+        print("=== ACTUALIZAR DATOS DE UN PAÍS ===")
+        nombre = input("Nombre exacto del país (* para Cancelar): ").strip()
+        if nombre == "*":
+            limpiar()
+            break
+        while es_nombre_vacio(nombre):
+            print("\nEl nombre no puede ser vacío.")
+            nombre = input("Nombre exacto del país (* para Cancelar): ").strip()
+            if nombre == "*":
+                limpiar()
+                return
+
+        paises = obtener_paises()
+        idx = next((i for i, p in enumerate(paises) if p["PAIS"].strip().lower() == nombre.strip().lower()), -1)
+        if idx == -1:
+            print("\nNo existe un país con ese nombre.")
+            print("Presione Enter para continuar...")
+            input(); limpiar()
+            continue
+
+        poblacion = input("Nueva población (entero >= 0): ").strip()
+        while not es_numero_positivo(poblacion):
+            print("\nSolo se aceptan números positivos.")
+            poblacion = input("Nueva población (entero >= 0): ").strip()
+
+        superficie = input("Nueva superficie (km², entero > 0): ").strip()
+        while not es_numero_positivo(superficie) or int(superficie) == 0:
+            print("\nDebe ser un entero positivo (> 0).")
+            superficie = input("Nueva superficie (km², entero > 0): ").strip()
+
+        paises[idx]["POBLACION"] = int(poblacion)
+        paises[idx]["SUPERFICIE"] = int(superficie)
+        sobrescribir_paises(paises)
+
+        limpiar()
+        print("Datos actualizados correctamente.")
+        print("Presione Enter para continuar...")
+        input(); limpiar()
+        break
+
+# CASE 4: FILTRO PAISES
+
+def filtrar_paises():
+    while True:
+        limpiar()
+        print("=== FILTRAR PAÍSES ===")
+        print("1. Por continente (coincidencia exacta)")
+        print("2. Por rango de población")
+        print("3. Por rango de superficie")
+        print("\n4. Volver al menú anterior")
+        opcion = input("\nOpción: ").strip()
+
+        if opcion == "1":
+            cont = input("Continente (ej: América, Europa, Asia...): ").strip()
+            while es_nombre_vacio(cont):
+                print("\nEl continente no puede ser vacío.")
+                cont = input("Continente: ").strip()
+            resultados = [p for p in obtener_paises() if p["CONTINENTE"].strip().lower() == cont.strip().lower()]
+            _imprimir_lista(resultados)
+
+        elif opcion == "2":
+            _filtrar_por_rango("POBLACION", "habitantes")
+        elif opcion == "3":
+            _filtrar_por_rango("SUPERFICIE", "km²")
+        elif opcion == "4":
+            limpiar(); break
+        else:
+            print("\nOpción inválida. Presione Enter para continuar...")
+            input()
+
+def _filtrar_por_rango(campo, unidad):
+    paises = obtener_paises()
+    print(f"\nRango de {campo.title()}: deje vacío para no acotar")
+    txt_min = input("Mínimo: ").strip()
+    txt_max = input("Máximo: ").strip()
+
+    minimo = None
+    maximo = None
+    if txt_min != "":
+        while not es_numero_positivo(txt_min):
+            print("Debe ser un número positivo o vacío.")
+            txt_min = input("Mínimo: ").strip()
+        minimo = int(txt_min)
+    if txt_max != "":
+        while not es_numero_positivo(txt_max):
+            print("Debe ser un número positivo o vacío.")
+            txt_max = input("Máximo: ").strip()
+        maximo = int(txt_max)
+
+    if minimo is not None and maximo is not None and minimo > maximo:
+        print("\nEl mínimo no puede ser mayor que el máximo. Presione Enter para continuar...")
+        input(); return
+
+    res = []
+    for p in paises:
+        v = int(p[campo])
+        if (minimo is None or v >= minimo) and (maximo is None or v <= maximo):
+            res.append(p)
+    _imprimir_lista(res, extra=lambda p: f"{campo.title()}: {p[campo]} {unidad}")
+
+def _imprimir_lista(lista, extra=None):
+    limpiar()
+    if not lista:
+        print("(sin resultados)")
+        print("\nPresione Enter para continuar..."); input(); limpiar(); return
+    print("=========================================")
+    for p in lista:
+        print(f"Nombre: {p['PAIS']}")
+        print(f"Población: {p['POBLACION']} habitantes.")
+        print(f"Superficie: {p['SUPERFICIE']} km²")
+        print(f"Continente: {p['CONTINENTE']}")
+        if extra:
+            print(f"-- {extra(p)}")
+        print("================================\n")
+    print("Presione Enter para continuar..."); input(); limpiar()
+
+# MUESTRO ESTADISTICAS - CASE 6
+
+def mostrar_estadisticas():
+    limpiar()
+    paises = obtener_paises()
+    if not paises:
+        print("(no hay datos cargados)")
+        print("\nPresione Enter para continuar..."); input(); limpiar(); return
+
+    # máx/min población
+    max_pop = max(paises, key=lambda p: p["POBLACION"])
+    min_pop = min(paises, key=lambda p: p["POBLACION"])
+
+    prom_pop = sum(p["POBLACION"] for p in paises) / len(paises)
+    prom_sup = sum(p["SUPERFICIE"] for p in paises) / len(paises)
+
+    # cantidad por continente
+    por_cont = {}
+    for p in paises:
+        c = p["CONTINENTE"]
+        por_cont[c] = por_cont.get(c, 0) + 1
+
+    print("=========== ESTADÍSTICAS ===========")
+    print(f"- País con mayor población: {max_pop['PAIS']} ({max_pop['POBLACION']})")
+    print(f"- País con menor población: {min_pop['PAIS']} ({min_pop['POBLACION']})")
+    print(f"- Promedio de población: {prom_pop:.2f}")
+    print(f"- Promedio de superficie: {prom_sup:.2f}")
+    print("- Cantidad de países por continente:")
+    for k, v in por_cont.items():
+        print(f"  · {k}: {v}")
+    print("====================================")
+
+    print("\nPresione Enter para continuar..."); input(); limpiar()
+
 def limpiar():
     os.system("cls")
 
@@ -373,17 +543,15 @@ def mostrar_menu():
             case "1": # Agregar pais
                 agregar_pais()                                
             case "2": # Actualizar datos
-                pass
+                actualizar_datos()
             case "3": # Buscar pais
                 buscar_pais()
             case "4": # Filtrar paises
-                pass
+                filtrar_paises()
             case "5": # Ordenar paises
-                
                 ordenar_paises()
-
             case "6": # Mostrar estadisticas 
-                pass
+                mostrar_estadisticas()
             case "7": # Salir
                 print("\nPrograma terminado. \nHasta la próxima!")
                 print()
