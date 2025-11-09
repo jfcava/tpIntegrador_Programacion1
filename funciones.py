@@ -286,17 +286,29 @@ def agregar_pais():
         limpiar()
         print("=== AGREGAR NUEVO PAÍS ===")
 
-        nombre_pais = input("Nombre del país: ")
+        nombre_pais = input("Nombre del país (* para Cancelar): ")
+
+        if nombre_pais == "*":
+            limpiar()
+            break
         
         # Validar pais repetido
         while es_pais_repetido(nombre_pais):
             print("\nEl país ingresado ya se encuentra en la base de datos. Vuelva a intentarlo.")
-            nombre_pais = input("Nombre del país: ")
+            nombre_pais = input("Nombre del país (* para Cancelar): ")
+            if nombre_pais == "*":
+                limpiar()
+                return
+  
 
         # Validar nombre vacio
         while es_nombre_vacio(nombre_pais):
             print("\nEl nombre no puede ser vacío.")
-            nombre_pais = input("Nombre del país: ")
+            nombre_pais = input("Nombre del país (* para Cancelar): ")
+            if nombre_pais == "*":
+                limpiar()
+                return
+
 
         poblacion = input("Población del país: ")
 
@@ -319,6 +331,7 @@ def agregar_pais():
             print("\nEl nombre no puede ser vacío.")
             continente = input("Continente del país: ")
 
+        
         # Cargar pais
 
         escribir_paisDB({"PAIS": nombre_pais, "POBLACION": int(poblacion), "SUPERFICIE": int(superficie), "CONTINENTE": continente})
