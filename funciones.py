@@ -458,30 +458,41 @@ def _filtrar_por_rango(campo, unidad):
 
     if minimo is not None and maximo is not None and minimo > maximo:
         print("\nEl mínimo no puede ser mayor que el máximo. Presione Enter para continuar...")
-        input(); return
+        input()
+        return
 
-    res = []
+    resultados = []
     for p in paises:
-        v = int(p[campo])
-        if (minimo is None or v >= minimo) and (maximo is None or v <= maximo):
-            res.append(p)
-    _imprimir_lista(res, extra=lambda p: f"{campo.title()}: {p[campo]} {unidad}")
+        valor = int(p[campo])
+        if (minimo is None or valor >= minimo) and (maximo is None or valor <= maximo):
+            resultados.append(p)
+
+    def texto_extra(pais):
+        return f"{campo.title()}: {pais[campo]} {unidad}"
+
+    _imprimir_lista(resultados, extra=texto_extra)
 
 def _imprimir_lista(lista, extra=None):
     limpiar()
     if not lista:
         print("(sin resultados)")
-        print("\nPresione Enter para continuar..."); input(); limpiar(); return
+        print("\nPresione Enter para continuar...")
+        input()
+        limpiar()
+        return
+
     print("=========================================")
     for p in lista:
         print(f"Nombre: {p['PAIS']}")
         print(f"Población: {p['POBLACION']} habitantes.")
         print(f"Superficie: {p['SUPERFICIE']} km²")
         print(f"Continente: {p['CONTINENTE']}")
-        if extra:
+        if extra is not None:
             print(f"-- {extra(p)}")
         print("================================\n")
-    print("Presione Enter para continuar..."); input(); limpiar()
+    print("Presione Enter para continuar...")
+    input()
+    limpiar()
 
 # MUESTRO ESTADISTICAS - CASE 6
 
@@ -490,20 +501,35 @@ def mostrar_estadisticas():
     paises = obtener_paises()
     if not paises:
         print("(no hay datos cargados)")
-        print("\nPresione Enter para continuar..."); input(); limpiar(); return
+        print("\nPresione Enter para continuar...")
+        input()
+        limpiar()
+        return
 
-    # máx/min población
-    max_pop = max(paises, key=lambda p: p["POBLACION"])
-    min_pop = min(paises, key=lambda p: p["POBLACION"])
+    max_pop = paises[0]
+    min_pop = paises[0]
+    for p in paises:
+        if p["POBLACION"] > max_pop["POBLACION"]:
+            max_pop = p
+        if p["POBLACION"] < min_pop["POBLACION"]:
+            min_pop = p
 
-    prom_pop = sum(p["POBLACION"] for p in paises) / len(paises)
-    prom_sup = sum(p["SUPERFICIE"] for p in paises) / len(paises)
+    total_pob = 0
+    total_sup = 0
+    for p in paises:
+        total_pob += p["POBLACION"]
+        total_sup += p["SUPERFICIE"]
 
-    # cantidad por continente
+    prom_pop = total_pob / len(paises)
+    prom_sup = total_sup / len(paises)
+
     por_cont = {}
     for p in paises:
-        c = p["CONTINENTE"]
-        por_cont[c] = por_cont.get(c, 0) + 1
+        cont = p["CONTINENTE"]
+        if cont not in por_cont:
+            por_cont[cont] = 1
+        else:
+            por_cont[cont] += 1
 
     print("=========== ESTADÍSTICAS ===========")
     print(f"- País con mayor población: {max_pop['PAIS']} ({max_pop['POBLACION']})")
@@ -511,11 +537,13 @@ def mostrar_estadisticas():
     print(f"- Promedio de población: {prom_pop:.2f}")
     print(f"- Promedio de superficie: {prom_sup:.2f}")
     print("- Cantidad de países por continente:")
-    for k, v in por_cont.items():
-        print(f"  · {k}: {v}")
+    for c in por_cont:
+        print(f"  · {c}: {por_cont[c]}")
     print("====================================")
 
-    print("\nPresione Enter para continuar..."); input(); limpiar()
+    print("\nPresione Enter para continuar...")
+    input()
+    limpiar()
 
 def limpiar():
     os.system("cls")
