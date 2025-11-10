@@ -104,6 +104,7 @@ Ejemplo de salida de estadísticas:
   · América: 5
   · Europa: 3
   · Asia: 2
+  
 ====================================
 
 ---
@@ -131,8 +132,6 @@ Ejemplo de salida de estadísticas:
 ---
 
 ### 🧾 Conclusión del grupo
-
----
 
 El trabajo permitió aplicar todos los contenidos de la materia, integrando manejo de archivos, estructuras de datos, modularización de funciones y control de errores.
 Además, fortaleció la práctica de trabajo colaborativo con Git y GitHub, simulando un entorno real de desarrollo.
