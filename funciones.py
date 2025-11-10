@@ -545,10 +545,10 @@ def mostrar_estadisticas():
             por_cont[cont] += 1
 
     print("=========== ESTADÍSTICAS ===========")
-    print(f"- País con mayor población: {max_pop['PAIS']} ({max_pop['POBLACION']})")
-    print(f"- País con menor población: {min_pop['PAIS']} ({min_pop['POBLACION']})")
-    print(f"- Promedio de población: {prom_pop:.2f}")
-    print(f"- Promedio de superficie: {prom_sup:.2f}")
+    print(f"- País con mayor población: {max_pop['PAIS']} ({max_pop['POBLACION']} habitantes)")
+    print(f"- País con menor población: {min_pop['PAIS']} ({min_pop['POBLACION']} habitantes)")
+    print(f"- Promedio de población: {prom_pop:.2f} habitantes.")
+    print(f"- Promedio de superficie: {prom_sup:.2f} kms²")
     print("- Cantidad de países por continente:")
     for c in por_cont:
         print(f"  · {c}: {por_cont[c]}")
