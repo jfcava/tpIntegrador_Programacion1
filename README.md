@@ -83,6 +83,7 @@ tpiIntegrador_Programacion1/
 ---
 
 ### 📈 Ejemplo de uso
+
 ===== Gestión de Países =====
 1) Agregar país
 2) Actualizar país (población y superficie)
@@ -93,6 +94,7 @@ tpiIntegrador_Programacion1/
 7) Salir
 
 Ejemplo de salida de estadísticas:
+
 =========== ESTADÍSTICAS ===========
 - País con mayor población: Brasil (213993437)
 - País con menor población: Uruguay (3473730)
